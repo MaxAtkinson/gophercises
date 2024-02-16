@@ -23,14 +23,16 @@ type storyHandler struct {
 }
 
 func (s *storyHandler) renderScene(scene Scene, w http.ResponseWriter) {
-	tmpl := template.Must(template.New("tpl").Parse(`{{.Title}}`))
+	tmpl := template.Must(template.ParseFiles("scene.html"))
 	tmpl.Execute(w, scene)
 }
 
 func (s *storyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	arc := r.URL.Query().Get("arc")
-	// Or if arc not in s.story
-	if arc == "" {
+
+	_, validScene := s.story[arc]
+
+	if arc == "" || !validScene {
 		arc = "intro"
 	}
 
